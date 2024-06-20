@@ -1,7 +1,6 @@
 ---
 Nombre de la máquina: Fing
 Sistema Operativo: Linux
-Dificultad: Facil 🟢
 Enlace de descarga: https://vulnyx.com/
 ---
 
