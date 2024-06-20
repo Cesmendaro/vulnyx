@@ -6,32 +6,32 @@ Enlace de descarga: https://vulnyx.com/
 
 ## Escaneo de equipos de la red.
 
-Una vez descargada la maquina y levantada en nuestro virtualizador, la buscamos con la herramienta ARP-SCAN.
+Una vez descargada la máquina y levantada en nuestro virtualizador, la buscamos con la herramienta ARP-SCAN.
 ```
 sudo arp-scan -I (NUESTRA INTERFAZ) --localnet
 ```
 
 ![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/cc792507-e35e-4d23-a315-86612237ff7e)
 
-Nos damos cuenta ya que luego de la MAC el escaneo con arp-scan nos dice "VMware", si aun no estamos seguros podemos tirarle un ping para verificar la conexion y su ttl.
+Nos damos cuenta de que, después de la MAC, el escaneo con ARP-SCAN nos dice 'VMware'. Si aún no estamos seguros, podemos hacerle un ping para verificar la conexión y su TTL.
 
 ![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/eb6f7ab9-0473-4fb1-9018-bec0e316b4b3)
 
 
 ## Nmap.
 
-Una vez tenemos claro la IP objetivo, es momento de el escaneo con nmap.
+Una vez que tenemos clara la IP objetivo, es momento de realizar el escaneo con Nmap.
 ```
 sudo nmap -p- --open -sS -sC -sV --min-rate 5000 -n -vvv -Pn 192.168.1.105
 ```
 
 ![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/01ebda0f-42f4-4834-b556-48c121ee84bf)
 
-Como vemos, el escaneo de puertos nos dice que hay 3 puertos abiertos, 22/ssh, 79/finger y 80/http. Como se constumbre, lo primero es revisar la aplicacion web que esta corriendo en el puerto  80.
+Como vemos, el escaneo de puertos nos indica que hay 3 puertos abiertos: 22/SSH, 79/Finger y 80/HTTP. Como es costumbre, lo primero es revisar la aplicación web que está corriendo en el puerto 80.
 
 ![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/821b6b76-6410-484a-8bf4-d7f39b1440db)
 
-Se trata de un Apache por defecto, por lo que vamos a buscar directios en caso de haber.
+Se trata de un Apache por defecto, por lo que vamos a buscar directorios, en caso de haber...
 
 ## Fuzzing.
 
@@ -41,16 +41,16 @@ gobuster dir -u http://192.168.1.105 -w (DICCIONARIO)
 
 ![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/790ff582-ba3a-441d-aec7-5b2f88f3c782)
 
-Como vemos la herramienta Gobuster no nos encuentra nada interesante, por lo que podriamos ponernos en la busqueda de subdirectorios, aunque primero vamos a revisar el servicio del puerto 79 que nos encontro el escaneo con nmap, finger.
+Como vemos, la herramienta Gobuster no nos encuentra nada interesante, por lo que podríamos ponernos en la búsqueda de subdirectorios. Aunque primero vamos a revisar el servicio del puerto 79 que nos encontró el escaneo con Nmap: Finger.
 
 ![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/fccd9f50-b88e-4b60-a05f-2258fad848ce)
 ![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/0fd5efe5-b008-4e25-92f8-e0793d775a87)
 
-Como vemos nos dice que tenemos modulos en Metasploit para dicho servicio.
+Como vemos, nos dice que tenemos módulos en Metasploit para dicho servicio.
 
 ## Metasploit.
 
-Ejectuamos metasploit y buscamos un modulo por la palabra "finger".
+Ejecutamos Metasploit y buscamos un módulo con la palabra 'finger'.
 
 ```
 msfconsole
@@ -61,31 +61,28 @@ search finger
 
 ![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/9e9f5a1f-fb23-4c1d-9343-f23d5f2c4ccd)
 
-Como vemos con el modulo numero 1 podemos listar usuario, por lo que procedemos a configurarlo y ejecutarlo.
+Como observamos, con el módulo número 1 podemos listar usuarios, por lo que procedemos a configurarlo y ejecutarlo.
 
 ![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/f5cc909a-89c7-4939-8899-debd586ac97f)
 
-Luego de configurado el exploit seteando la ip objetivo y el diccionario que utilizamos para el ataque con nombres de usuarios, nos dice que hay un usuario de nombre "adam"
-Rapidamente probamos sin exito con el modulo de ataques de fuerza bruta al protocolo ssh, por lo que seguimos con la herramienta Hydra.
+Después de configurar el exploit, estableciendo la IP objetivo y el diccionario que utilizamos para el ataque con nombres de usuarios, nos indica que hay un usuario llamado 'adam'. Rápidamente, probamos sin éxito el módulo de ataques de fuerza bruta al protocolo SSH, por lo que continuamos con la herramienta Hydra.
 
 ![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/60bebce6-9903-4aaa-b9e2-0f8c40f9f670)
 
 ## Hydra.
 
-Atacamos con hydra indicando el usurio, el diccionario que vamos a utilizar y el protocolo que vamos a atacar.
-
+Atacamos con Hydra indicando el usuario, el diccionario que utilizaremos y el protocolo que vamos a atacar.
 ```
 sudo hydra -l adam -P DICCIONARIO ssh://192.168.1.105
 ```
 
 ![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/f26d8fd3-dd24-4a9a-89d0-1f6884443d26)
 
-Hydra nos encuentra la contraseña "passion", por lo que nos conectamos por ssh.
+Hydra descubre la contraseña "passion", permitiéndonos así conectar por SSH.
 
 ## Escalada de privilegios.
 
-Lo primero que probamos son los comandos:
-
+Una vez conectados por SSH con el usuario adam, lo primero que probamos son los comandos habituales o estándar:
 ```
 sudo -l
 ```
@@ -95,7 +92,7 @@ find / -perm -4000 2</dev/null
 
 ![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/7c596878-a73b-4511-af43-0c1473cb4b64)
 
-Dentro de los binarios no vemos nada llamativo, mas que el binario DOAS, por lo que procedemos a descargar y usar la herramienta "linpeas.sh" para estar mas seguros.
+Dentro de los binarios no encontramos nada destacable, excepto el binario DOAS. Por lo tanto, procedemos a descargar y utilizar la herramienta "linpeas.sh" para mayor seguridad.
 
 ```
 wget https://github.com/peass-ng/PEASS-ng/releases/latest/download/linpeas_linux_amd64
@@ -103,4 +100,23 @@ wget https://github.com/peass-ng/PEASS-ng/releases/latest/download/linpeas_linux
 
 ![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/0e16e493-2b1c-4da1-afdc-f02e4f300f31)
 
-Como vemos el resultado del escaneo con linpeas nos 
+Como observamos en el resultado del escaneo con linpeas, nuevamente resalta el binario DOAS y el chequeo del archivo doas.conf. Básicamente, nos indica que podemos ejecutar el binario FIND como root. Por lo tanto, procedemos a buscar más información sobre DOAS.
+
+![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/bcb0c51a-2be9-4aa6-894b-b2d00ceac5dc)
+
+Finalmente, sabiendo que podemos ejecutar FIND como root, vamos a https://gtfobins.github.io/#find para explorar las opciones que tenemos para escalar privilegios con dicho binario.
+
+```
+find . -exec /bin/sh \; -quit
+```
+
+![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/6f16b0dd-cd6c-42ca-8299-3076417ea9db)
+
+Colocamos el comando encontrado en GTFObins, especificando que lo ejecutaremos con el comando DOAS y utilizando el usuario ROOT.
+
+![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/bde0fc3d-b6b8-4e4f-a3cd-3505afd80fef)
+
+Y como podemos observar, ahora somos el usuario root.
+
+## Flags. 
+![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/640e0005-326b-46a8-b44b-3875fe2b22e0)
