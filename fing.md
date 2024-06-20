@@ -40,3 +40,32 @@ gobuster dir -u http://192.168.1.105 -w (DICCIONARIO)
 ```
 
 ![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/790ff582-ba3a-441d-aec7-5b2f88f3c782)
+
+Como vemos la herramienta Gobuster no nos encuentra nada interesante, por lo que podriamos ponernos en la busqueda de subdirectorios, aunque primero vamos a revisar el servicio del puerto 79 que nos encontro el escaneo con nmap, finger.
+
+![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/fccd9f50-b88e-4b60-a05f-2258fad848ce)
+![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/0fd5efe5-b008-4e25-92f8-e0793d775a87)
+
+Como vemos nos dice que tenemos modulos en Metasploit para dicho servicio.
+
+## Metasploit.
+
+Ejectuamos metasploit y buscamos un modulo por la palabra "finger".
+
+```
+msfconsole
+```
+```
+search finger
+```
+
+![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/9e9f5a1f-fb23-4c1d-9343-f23d5f2c4ccd)
+
+Como vemos con el modulo numero 1 podemos listar usuario, por lo que procedemos a configurarlo y ejecutarlo.
+
+![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/f5cc909a-89c7-4939-8899-debd586ac97f)
+
+Luego de configurado el exploit seteando la ip objetivo y el diccionario que utilizamos para el ataque con nombres de usuarios, nos dice que hay un usuario de nombre "adam"
+
+
+
