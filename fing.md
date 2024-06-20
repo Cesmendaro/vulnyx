@@ -6,32 +6,32 @@ Enlace de descarga: https://vulnyx.com/
 
 ## Escaneo de equipos de la red.
 
-Una vez descargada la máquina y levantada en nuestro virtualizador, la buscamos con la herramienta ARP-SCAN.
+Una vez que hemos descargado la máquina y la hemos levantado en nuestro virtualizador, procedemos a buscarla utilizando la herramienta ARP-SCAN.
 ```
 sudo arp-scan -I (NUESTRA INTERFAZ) --localnet
 ```
 
 ![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/cc792507-e35e-4d23-a315-86612237ff7e)
 
-Nos damos cuenta de que, después de la MAC, el escaneo con ARP-SCAN nos dice 'VMware'. Si aún no estamos seguros, podemos hacerle un ping para verificar la conexión y su TTL.
+Nos percatamos de que después de la dirección MAC, el escaneo con ARP-SCAN identifica el dispositivo como 'VMware'. Para confirmarlo, podríamos realizar un ping para verificar la conexión y su TTL.
 
 ![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/eb6f7ab9-0473-4fb1-9018-bec0e316b4b3)
 
 
 ## Nmap.
 
-Una vez que tenemos clara la IP objetivo, es momento de realizar el escaneo con Nmap.
+Una vez que hemos identificado claramente la IP objetivo, es el momento de realizar el escaneo con Nmap.
 ```
 sudo nmap -p- --open -sS -sC -sV --min-rate 5000 -n -vvv -Pn 192.168.1.105
 ```
 
 ![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/01ebda0f-42f4-4834-b556-48c121ee84bf)
 
-Como vemos, el escaneo de puertos nos indica que hay 3 puertos abiertos: 22/SSH, 79/Finger y 80/HTTP. Como es costumbre, lo primero es revisar la aplicación web que está corriendo en el puerto 80.
+Como podemos observar, el escaneo de puertos revela que hay 3 puertos abiertos: 22/SSH, 79/Finger y 80/HTTP. Siguiendo el procedimiento habitual, lo primero que haremos es revisar la aplicación web que se está ejecutando en el puerto 80.
 
 ![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/821b6b76-6410-484a-8bf4-d7f39b1440db)
 
-Se trata de un Apache por defecto, por lo que vamos a buscar directorios, en caso de haber...
+Dado que se trata de un servidor Apache por defecto, procederemos a buscar directorios, en caso de que los haya.
 
 ## Fuzzing.
 
@@ -46,7 +46,7 @@ Como vemos, la herramienta Gobuster no nos encuentra nada interesante, por lo qu
 ![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/fccd9f50-b88e-4b60-a05f-2258fad848ce)
 ![image](https://github.com/Cesmendaro/vulnyx/assets/153618246/0fd5efe5-b008-4e25-92f8-e0793d775a87)
 
-Como vemos, nos dice que tenemos módulos en Metasploit para dicho servicio.
+Encontramos que existen módulos en Metasploit disponibles para ese servicio.
 
 ## Metasploit.
 
